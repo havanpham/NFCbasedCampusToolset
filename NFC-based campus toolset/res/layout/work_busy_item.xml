@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/common_background"
+    android:orientation="vertical" >
+
+    <LinearLayout
+		style="?whiteBackground"
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/busywork"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/board_color"
+            android:textSize="40dp" />
+
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/hour"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/board_color"
+            android:textSize="24dp" />
+
+    </LinearLayout>
+
+       <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="* * * * * * * * * * * * * * * * * *"
+                android:gravity="center"
+				android:singleLine="true"
+                android:drawableBottom="#ffffff"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+	
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="333dp"
+        android:divider="#ffffff"
+        android:dividerHeight="2dp"
+        android:headerDividersEnabled="true" 
+        
+        >
+
+    </ListView>
+    
+	<RelativeLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_weight="0.05" >
+
+
+
+		<!-- <Button
+		    android:id="@+id/btnOK"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="false"
+		    android:layout_centerVertical="true"
+		    android:textSize="20dp"
+		    android:text="  Done" />  -->
+
+
+		<Button
+		    android:id="@+id/btnOK"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentRight="true"
+		    android:textSize="20dp"
+		    android:text="Done " />
+
+
+</RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:weightSum="1">
+
+	<LinearLayout android:layout_height="wrap_content" style="?whiteBackground"
+		android:layout_width="match_parent">
+		<ImageView 
+		    android:id="@+id/view_icon"
+		    android:layout_width="48dp"
+            android:layout_height="48dp"
+			android:src="@drawable/nfc_icon"></ImageView>
+		<TextView 
+		    android:id="@+id/view_tile"
+		    android:layout_width="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:paddingTop="4dp" style="?listItem" android:text="NFC tag content"
+			android:textSize="32dp"
+			android:layout_height="wrap_content">
+		</TextView>
+	</LinearLayout>
+
+	<TextView android:layout_width="fill_parent"
+		android:id="@+id/overViewInfo"
+		android:layout_height="wrap_content" android:text="NFC Tag Infomation:"
+		style="?textSubheader" />
+
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		style="?whiteBackground">
+
+		<TextView android:layout_width="fill_parent"
+			android:id="@+id/tagInfo1"
+			android:layout_height="wrap_content" android:text="Tag Type:"
+			style="?textRegular" />
+
+		<TextView android:layout_width="fill_parent"
+			android:id="@+id/tagInfo2"
+			android:layout_height="wrap_content" android:text="Tag size:"
+			style="?textRegular" />
+
+	</LinearLayout>
+
+	<TextView android:layout_width="fill_parent"
+		android:id="@+id/listViewInfo"
+		android:layout_height="wrap_content" android:text="NFC Tag Content:"
+		style="?textSubheader" />
+
+	<ListView
+	    android:id="@+id/list1"
+	    android:layout_width="fill_parent"
+	    android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:orientation="horizontal" android:weightSum="1">
+    <ImageView android:id="@+id/imageView1" android:layout_height="wrap_content" android:src="@drawable/ic_launcher" android:layout_width="wrap_content"></ImageView>
+    
+    <LinearLayout 
+    	android:layout_height="wrap_content" 
+    	android:layout_width="wrap_content" android:orientation="vertical" android:layout_weight="1.00">
+        <TextView 
+        	android:text="TextView" 
+        	android:textSize="28px"
+        	android:id="@+id/main_content" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        	android:paddingTop="22px"
+        	android:lines="2"
+        	android:textColor="#ffffff"
+        />
+        <!--  
+        <TextView 
+        	android:text="TextView" 
+        	android:textSize="16px"
+        	android:lines="1"
+        	android:textColor="#cccccc"
+        	android:id="@+id/sub_content" 
+        	android:layout_width="wrap_content" 
+        	android:layout_height="wrap_content"
+        /> -->
+    </LinearLayout>
+    <!--  <CheckBox 
+    	android:id="@+id/check_work" 
+    	android:layout_height="wrap_content"
+    	android:paddingTop="45px"
+    	android:paddingRight="10px" 
+    	android:text=""
+    	android:layout_marginLeft="1px" android:layout_width="wrap_content"/> -->
+    
+</LinearLayout>

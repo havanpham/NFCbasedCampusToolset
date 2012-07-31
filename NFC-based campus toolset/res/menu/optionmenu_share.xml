@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/itemDone" 
+        android:title="Delete"
+        android:icon="@drawable/green_cross_icon"
+        android:orderInCategory="0" ></item>
+     <item android:id="@+id/itemDelete" 
+        android:title="Done"
+        android:icon="@drawable/green_ok_icon"       
+        android:orderInCategory="1" ></item>	
+
+</menu>
