@@ -9,6 +9,9 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -64,6 +67,7 @@
         <activity android:name="nfc.room.RoomManagerActivity" android:screenOrientation="portrait" android:configChanges="orientation"></activity>
         <activity android:configChanges="orientation" android:screenOrientation="portrait" android:name="nfc.room.calendar.Calendar"></activity>
         <activity android:configChanges="orientation" android:name="nfc.room.calendar.WorkBusy" android:screenOrientation="portrait"></activity>
+        <activity android:name="nfc.lib.OpenLibWeb"></activity>
         
     </application>
 

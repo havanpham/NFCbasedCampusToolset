@@ -52,7 +52,6 @@ import com.android.nfcRead.record.TextRecord;
 import com.android.nfcRead.record.UriRecord;
 import com.android.nfcRead.record.SmartPoster.RecommendedAction;
 
-
 public class TagViewerActivity extends Activity {
 	private static final String TAG = "TagViewer";
 	boolean mResumed = false;
@@ -70,25 +69,27 @@ public class TagViewerActivity extends Activity {
 	String currentTagContent = null;
 
 	boolean active = false;
-	
+
 	// ID of special tag
 	private final String ID_APP = "@#:-$";
+	private boolean isLibMap = false;
+
+	private String tmp;
 
 	// Notification
 	private NotificationManager mNotificationManager;
 	private static final int DIALOG1_KEY = 0, DIALOG2_KEY = 1;
 
-
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Remove title bar
+		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.tag_viewer_list);
-//		setTitle("Waiting for NFC-Tag...");
-//		path = "/data/data/" + getPackageName() + "/files";
+		// setTitle("Waiting for NFC-Tag...");
+		// path = "/data/data/" + getPackageName() + "/files";
 		Intent intent = getIntent();
 		String action = intent.getAction();
 		NdefMessage[] msgs = null;
@@ -101,7 +102,8 @@ public class TagViewerActivity extends Activity {
 			// Wait >>> doi 1 khoang thoi gian de luu tru ket noi
 		}
 		array = new ArrayList<SmartPoster>();
-		arrayAdapter = new nfc.customview.SmartPosterAdapter(this, R.layout.list, array);
+		arrayAdapter = new nfc.customview.SmartPosterAdapter(this,
+				R.layout.list, array);
 
 		final ListView list = (ListView) findViewById(R.id.list1);
 		list.setAdapter(arrayAdapter);
@@ -163,9 +165,9 @@ public class TagViewerActivity extends Activity {
 						|| NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent
 								.getAction()) || NfcAdapter.ACTION_TAG_DISCOVERED
 							.equals(intent.getAction()))) {
-			NdefMessage[] msgs = getNdefMessages(intent);			
+			NdefMessage[] msgs = getNdefMessages(intent);
 			setTitle(TAG + "/" + "NDEF exchange mode !!");
-			
+
 			buildTagViews(msgs);
 			notificationFunc();
 			dismissDialog(DIALOG2_KEY);
@@ -218,37 +220,72 @@ public class TagViewerActivity extends Activity {
 			for (NdefRecord record : records) {
 				if (UriRecord.isUri(record)) {
 					Log.d("Uri Record:", "is URI record");
-					String str = UriRecord.typeOfUriRecord(record);
-					arrayAdapter.add(new SmartPoster(UriRecord.parse(record),
-							new TextRecord("en", str),
-							RecommendedAction.DO_ACTION, "sp"));
-					// elements.add(UriRecord.parse(record));
+					if (isLibMap) {
+						isLibMap = false;
+
+						Intent intent_lib = new Intent(TagViewerActivity.this,
+								OpenLibWeb.class);
+						intent_lib.putExtra("ssid", tmp);
+						Log.d("ssid", tmp);
+						tmp = null;
+						intent_lib.putExtra("url", UriRecord.parse(record)
+								.getUri().toString());
+						Log.d("url", UriRecord.parse(record).getUri()
+								.toString());
+						TagViewerActivity.this.startActivity(intent_lib);
+						finish();
+					} else {
+						String str = UriRecord.typeOfUriRecord(record);
+						arrayAdapter.add(new SmartPoster(UriRecord
+								.parse(record), new TextRecord("en", str),
+								RecommendedAction.DO_ACTION, "sp"));
+						// elements.add(UriRecord.parse(record));
+					}
+
 				} else if (TextRecord.isText(record)) {
-					Log.d("Text Record:", "is Text record");					
+					Log.d("Text Record:", "is Text record");
 					int lenth = ID_APP.length();
-					if(count==0 && TextRecord.parse(record).getText().length()>lenth && TextRecord.parse(record).getText().substring(0, lenth).equals(ID_APP)){
-						isRomSchedule=true;
-						roomName = TextRecord.parse(record).getText().substring(lenth);
-						count++;						
-					}else {
-						if(!isRomSchedule){
-							Toast.makeText(this, "This is not a tag of room schedule", Toast.LENGTH_SHORT).show();
-							arrayAdapter.add(new SmartPoster(UriRecord.parse(nRecord),
-									new TextRecord("en", TextRecord.parse(record)
-											.getText()), RecommendedAction.UNKNOWN,
-									"sp"));							
-						}else {
-							ArrayList<Subject> array = new ArrayList<Subject>();					
+					if (TextRecord.parse(record).getText().length() > lenth
+							&& TextRecord.parse(record).getText()
+									.substring(0, lenth).equals(ID_APP)
+							&& records.length == 2) {
+						isLibMap = true;
+						tmp = TextRecord.parse(record).getText()
+								.substring(lenth);
+						continue;
+					}
+					if (count == 0
+							&& TextRecord.parse(record).getText().length() > lenth
+							&& TextRecord.parse(record).getText()
+									.substring(0, lenth).equals(ID_APP)
+							&& records.length > 4) {
+						isRomSchedule = true;
+						roomName = TextRecord.parse(record).getText()
+								.substring(lenth);
+						count++;
+					} else {
+						if (!isRomSchedule) {
+							Toast.makeText(this,
+									"This is not a tag of room schedule",
+									Toast.LENGTH_SHORT).show();
+							arrayAdapter.add(new SmartPoster(UriRecord
+									.parse(nRecord), new TextRecord("en",
+									TextRecord.parse(record).getText()),
+									RecommendedAction.UNKNOWN, "sp"));
+						} else {
+							ArrayList<Subject> array = new ArrayList<Subject>();
 							String temp = TextRecord.parse(record).getText();
 							String[] parts = temp.split("\\#");
-			//								for(String part : parts ){
-			//									Log.d("text Record", part);
-			//								}
-							for (String part : parts){
-								Subject sub = new Subject(part.substring(0, 4),part.substring(4, 8),part.substring(8, part.length()));
+							// for(String part : parts ){
+							// Log.d("text Record", part);
+							// }
+							for (String part : parts) {
+								Subject sub = new Subject(part.substring(0, 4),
+										part.substring(4, 8), part.substring(8,
+												part.length()));
 								array.add(sub);
-							}	
-							
+							}
+
 							switch (count) {
 							case 1:
 								weekSchedule.setMonday(array);
@@ -264,26 +301,31 @@ public class TagViewerActivity extends Activity {
 								break;
 							case 5:
 								weekSchedule.setFriday(array);
-								break; 
+								break;
 							default:
 								break;
 							}
-						
-							if(count==5){
-								String fileName = Create_EditXML.saveTagToFile(TagViewerActivity.this, weekSchedule, roomName);
+
+							if (count == 5) {
+								String fileName = Create_EditXML.saveTagToFile(
+										TagViewerActivity.this, weekSchedule,
+										roomName);
 								Bundle sendBundle = new Bundle();
-								sendBundle.putSerializable("data", weekSchedule);
-								Intent intent = new Intent(TagViewerActivity.this, RoomScheduleViewActivity.class);
+								sendBundle
+										.putSerializable("data", weekSchedule);
+								Intent intent = new Intent(
+										TagViewerActivity.this,
+										RoomScheduleViewActivity.class);
 								intent.putExtra("data", sendBundle);
 								intent.putExtra("Room Name", roomName);
 								intent.putExtra("FileName", fileName);
 								TagViewerActivity.this.startActivity(intent);
-								finish();				
+								finish();
 							}
 							count++;
 						}
 					}
-					
+
 				} else if (SmartPoster.isPoster(record)) {
 					Log.d("Smart Poster Record:", "is Smart Poster");
 
@@ -294,12 +336,16 @@ public class TagViewerActivity extends Activity {
 					if (textRecord != null) {
 						Log.d("NFC", textRecord.getText().substring(lenth));
 						Log.d("NFC", smartPoster.getUriRecord().toString());
-//						if (textRecord.getText().substring(0, lenth).equals(ID_APP)){
-//							Intent webintent = new Intent(TagViewerActivity.this, OpenLibWeb.class);
-//							webintent.putExtra("ssid",textRecord.getText().substring(lenth) );
-//							webintent.putExtra("url", smartPoster.getUriRecord().toString());
-//						}
-					
+						// if (textRecord.getText().substring(0,
+						// lenth).equals(ID_APP)){
+						// Intent webintent = new Intent(TagViewerActivity.this,
+						// OpenLibWeb.class);
+						// webintent.putExtra("ssid",textRecord.getText().substring(lenth)
+						// );
+						// webintent.putExtra("url",
+						// smartPoster.getUriRecord().toString());
+						// }
+
 						arrayAdapter.add(new SmartPoster(UriRecord
 								.parse(nRecord), new TextRecord("en",
 								textRecord.getText()),
@@ -318,7 +364,6 @@ public class TagViewerActivity extends Activity {
 		} else {
 
 		}
-		
 
 	}
 
@@ -326,8 +371,6 @@ public class TagViewerActivity extends Activity {
 		mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent,
 				mNdefExchangeFilters, null);
 	}
-
-
 
 	private void notificationFunc() {
 		// TODO Auto-generated method stub
@@ -341,61 +384,62 @@ public class TagViewerActivity extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-			case DIALOG1_KEY: {
-				ProgressDialog dialog = new ProgressDialog(this);
-				dialog.setTitle("Touch NFC Tag to read");
-				dialog.setMessage("Please wait while reading...");
-				dialog.setIcon(R.drawable.nfc_icon_small);
-				dialog.setIndeterminate(true);
-				dialog.setCancelable(false);
-				dialog.setCanceledOnTouchOutside(false);
-				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-	
-					@Override
-					public boolean onKey(DialogInterface dialog, int keyCode,
-							KeyEvent event) {
-						if (keyCode == KeyEvent.KEYCODE_BACK)
-							finish();
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
-	
-				dialog.setOnDismissListener(new Dialog.OnDismissListener() {
-	
-					@Override
-					public void onDismiss(DialogInterface dialog) {
-						// TODO Auto-generated method stub
-						// finish(); // Neu co finish o day thi khi dismiss dialog
-						// no se finish activity luon !!!
-					}
-				});
-				return dialog;
-			}
-	
-			case DIALOG2_KEY: {
-				// Dialog dialog = new Dialog(TagViewer.this);
-				Dialog dialog = new Dialog(TagViewerActivity.this, R.style.Theme_White);
-	
-				dialog.setContentView(R.layout.custom_dialog);	
+		case DIALOG1_KEY: {
+			ProgressDialog dialog = new ProgressDialog(this);
+			dialog.setTitle("Touch NFC Tag to read");
+			dialog.setMessage("Please wait while reading...");
+			dialog.setIcon(R.drawable.nfc_icon_small);
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 
-				dialog.setCancelable(false);
-				dialog.setCanceledOnTouchOutside(false);
-				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-	
-					@Override
-					public boolean onKey(DialogInterface dialog, int keyCode,
-							KeyEvent event) {
-						if (keyCode == KeyEvent.KEYCODE_BACK)
-							finish();
-						// TODO Auto-generated method stub
-						return false;
-					}
-				});
-	
-				dialog.show();
-				return dialog;
-			}
+				@Override
+				public boolean onKey(DialogInterface dialog, int keyCode,
+						KeyEvent event) {
+					if (keyCode == KeyEvent.KEYCODE_BACK)
+						finish();
+					// TODO Auto-generated method stub
+					return false;
+				}
+			});
+
+			dialog.setOnDismissListener(new Dialog.OnDismissListener() {
+
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					// TODO Auto-generated method stub
+					// finish(); // Neu co finish o day thi khi dismiss dialog
+					// no se finish activity luon !!!
+				}
+			});
+			return dialog;
+		}
+
+		case DIALOG2_KEY: {
+			// Dialog dialog = new Dialog(TagViewer.this);
+			Dialog dialog = new Dialog(TagViewerActivity.this,
+					R.style.Theme_White);
+
+			dialog.setContentView(R.layout.custom_dialog);
+
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+
+				@Override
+				public boolean onKey(DialogInterface dialog, int keyCode,
+						KeyEvent event) {
+					if (keyCode == KeyEvent.KEYCODE_BACK)
+						finish();
+					// TODO Auto-generated method stub
+					return false;
+				}
+			});
+
+			dialog.show();
+			return dialog;
+		}
 		}
 		return null;
 	}
