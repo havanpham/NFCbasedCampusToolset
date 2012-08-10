@@ -240,7 +240,9 @@ public class WorkBusy extends Activity implements OnClickListener {
     			&& 
     			(valueExtras2.toString().compareTo(tf.format(mCursor.getLong(2)).toString())) >=0)
     	{
-    		arrayAdapter.add(new ListItem(R.drawable.yammi_icon, mCursor.getString(1), mCursor.getString(0) +"-" +df.format(mCursor.getLong(2)), mCursor.getLong(3)));
+    		arrayAdapter.add(new ListItem(R.drawable.yammi_icon, mCursor.getString(1), 
+    		mCursor.getString(0) +"-" +df.format(mCursor.getLong(2)), mCursor.getLong(3)
+    		mCursor.getLong(4), mCursor.getLong(5)));
     	}
 
     	}
