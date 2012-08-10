@@ -6,6 +6,6 @@
 	<string name="busywork">Work busy</string> 
 	<string name="hour">Hour</string> 
 	<string name="desc">123</string> 
-	<string name="edit">Edit Event</string> 
+	<string name="edit">View Event</string> 
 	<string name="delete">Delete Event</string>
 </resources>
