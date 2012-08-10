@@ -286,7 +286,13 @@ public class RoomScheduleViewActivity extends Activity implements
 				// TODO intent to next activity
 				switch (nextActivity) {
 				case TAKE_NOTE:	
-					nfc.room.calendar.Calendar.Start(RoomScheduleViewActivity.this);	
+					//nfc.room.calendar.Calendar.Start(RoomScheduleViewActivity.this);
+					Intent intent = new Intent(RoomScheduleViewActivity.this, nfc.room.calendar.Calendar.class);
+					Bundle extras1 = new Bundle();
+					extras1.putString("Room", title);
+					extras1.putString("Hour", date);
+					intent.putExtras(extras1);
+					startActivity(intent);
 					dialog.dismiss();
 					break;
 
