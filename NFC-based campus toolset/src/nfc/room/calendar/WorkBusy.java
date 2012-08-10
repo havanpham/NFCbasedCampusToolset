@@ -46,7 +46,14 @@ public class WorkBusy extends Activity implements OnClickListener {
 	final int Delete = 0;
 	final Context context = this;
 	private Cursor mCursor = null;
-	private static final String[] COLS = new String[] { CalendarContract.Events.EVENT_LOCATION, CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events._ID};
+	private static final String[] COLS = new String[] { 
+		CalendarContract.Events.EVENT_LOCATION, 
+		CalendarContract.Events.TITLE, 
+		CalendarContract.Events.DTSTART, 
+		CalendarContract.Events._ID, 
+		CalendarContract.Events.DTSTART,
+		CalendarContract.Events.DTEND, 
+	};
 	
 	
 	@Override
@@ -58,7 +65,7 @@ public class WorkBusy extends Activity implements OnClickListener {
 		checkBox = (CheckBox)findViewById(R.id.check_work);
 		
 		mCursor = getContentResolver().query(CalendarContract.Events.CONTENT_URI, COLS, null, null, null);
-        mCursor.moveToFirst();
+        	mCursor.moveToFirst();
 		
 //////////Get button and handle event//////////////////////////////////////////////////////////////////////////
 		//Button btnDelete = (Button) findViewById(R.id.btnDelete);
@@ -99,16 +106,10 @@ public class WorkBusy extends Activity implements OnClickListener {
 		    	valueExtras2.append(hour2[0]+":"+hour2[1] + " PM");
 		    }
 		}
-		//Toast.makeText(WorkBusy.this, valueExtras1.toString(), Toast.LENGTH_SHORT).show();
-		//Toast.makeText(Calendar.this, valueExtras2.toString(), Toast.LENGTH_SHORT).show();
-		//Time t1 = Time.valueOf(valueExtras1.toString());
-		//long l1 = t1.getTime();
-		//Time t2 = Time.valueOf(valueExtras2.toString());
-		//long l2 = t2.getTime();
 		
 		// /////////// Set list View////////////////////////////////////////////////
-    	array = new ArrayList<ListItem>();
-    	arrayAdapter = new ListWorkAdapter(this, R.layout.work_busy_item, array){
+		    array = new ArrayList<ListItem>();
+		    arrayAdapter = new ListWorkAdapter(this, R.layout.work_busy_item, array){
 
 			/* (non-Javadoc)
 			 * @see nfc.customview.ListWorkAdapter#getView(int, android.view.View, android.view.ViewGroup)
@@ -127,36 +128,28 @@ public class WorkBusy extends Activity implements OnClickListener {
 				
 				final TextView 	textView1 = (TextView) rowView.findViewById(R.id.main_content);
 				TextView textView2 = (TextView) rowView.findViewById(R.id.sub_content);
-		       	textView1.setText(pt.getMainText());
-		       	textView2.setText(pt.getSubText());
-		       	
-		    
-//		       	textView1.setOnClickListener(new OnClickListener() {
-//					
-//					@Override
-//					public void onClick(View arg0) {
-//						// TODO Auto-generated method stub
-//						Log.d("On Item Click", (String)textView1.getText());
-//					}
-//				});
+			       	textView1.setText(pt.getMainText());
+			       	textView2.setText(pt.getSubText());
 		       		return rowView;
 			}
     		
     	};
 
-    	final ListView list = (ListView) findViewById(R.id.listView1);
-    	list.setAdapter(arrayAdapter);
-    	
-    	list.setOnItemClickListener(new OnItemClickListener() {
+		    	final ListView list = (ListView) findViewById(R.id.listView1);
+		    	list.setAdapter(arrayAdapter);
+		    	
+		    	list.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View arg1,
 					int position, long id) {
 				
 				Object o = list.getItemAtPosition(position);
-            	final ListItem fullObject = (ListItem)o;
-            	final Long event_id = fullObject.getID();
-            	final Dialog dialog = new Dialog(context);
+		            	final ListItem fullObject = (ListItem)o;
+		            	final Long event_id = fullObject.getID();
+		            	final long startTime = fullObject.getStart();
+            			final long endTime = fullObject.getEnd();
+		            	final Dialog dialog = new Dialog(context);
 				dialog.setContentView(R.layout.dialog);
 				dialog.setTitle("Let's choose: ");
 				
@@ -172,7 +165,7 @@ public class WorkBusy extends Activity implements OnClickListener {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						btn_edit.setChecked(true);
-						btn_delete.setChecked(false);
+						if(btn_edit.isChecked()) btn_delete.setChecked(false);
 						nAc= Edit;
 					}
 				});
@@ -183,7 +176,7 @@ public class WorkBusy extends Activity implements OnClickListener {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						btn_delete.setChecked(true);
-						btn_delete.setChecked(false);
+						if(btn_delete.isChecked()) btn_edit.setChecked(false);
 						nAc = Delete;
 					}
 				});
@@ -196,9 +189,17 @@ public class WorkBusy extends Activity implements OnClickListener {
 						switch(nAc){
 						case Edit:
 							Uri uri = ContentUris.withAppendedId(Events.CONTENT_URI, event_id);
-							Intent intent = new Intent(Intent.ACTION_EDIT).setData(uri);
-							startActivity(intent);
-							uri = null;
+							Intent intent = new Intent(Intent.ACTION_VIEW);
+							intent.setType("vnd.android.cursor.item/event");
+							intent.setData(uri);
+							intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
+							intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime);
+							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+									| Intent.FLAG_ACTIVITY_SINGLE_TOP
+							        | Intent.FLAG_ACTIVITY_CLEAR_TOP
+							        | Intent.FLAG_ACTIVITY_NO_HISTORY
+							        | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+									);
 							dialog.dismiss();
 							break;
 						case Delete:
@@ -260,20 +261,6 @@ public class WorkBusy extends Activity implements OnClickListener {
 			break;
 		}
 	}
-
-	/*private void deleteCheckwork() {
-		// TODO Auto-generated method stub
-		
-		  
-		if (array.size() > 0) {
-            for (int i = array.size() - 1; i >= 0; i--) {
-                if (array.get(i).isChecked()) {
-                    array.remove(i);
-                    arrayAdapter.notifyDataSetChanged();
-                    continue;
-                }
-            }
-        }*/
 		
 		
 	}
