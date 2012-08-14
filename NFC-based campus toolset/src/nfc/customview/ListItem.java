@@ -10,31 +10,35 @@ public class ListItem {
 	private Long event_id;
 	private Long startTime;
 	private Long endTime;
-	public ListItem (int imageURL, String main_text,String sub_text) {
-		this.imageURL=imageURL;
-		this.main_text=main_text;
+
+	public ListItem(int imageURL, String main_text, String sub_text) {
+		this.imageURL = imageURL;
+		this.main_text = main_text;
 		this.sub_text = sub_text;
 	}
-	public ListItem (int imageURL, String place, String title, Long event_id, Long startTime, Long endTime) {
-		this.imageURL=imageURL;
-		this.main_text=place;
+
+	public ListItem(int imageURL, String place, String title, Long event_id,
+			Long startTime, Long endTime) {
+		this.imageURL = imageURL;
+		this.main_text = place;
 		this.sub_text = title;
 		this.event_id = event_id;
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}
-	
+
 	public int getImage() {
-		return imageURL;	
+		return imageURL;
 	}
+
 	public String getMainText() {
 		return main_text;
 	}
 
-	public String getSubText(){
+	public String getSubText() {
 		return sub_text;
 	}
-	
+
 	public void setChecked(boolean isChecked) {
 		this.isChecked = isChecked;
 	}
@@ -43,15 +47,15 @@ public class ListItem {
 		return isChecked;
 	}
 
-	public Long getID(){
+	public Long getID() {
 		return event_id;
 	}
-	
-	public Long getStart(){
+
+	public Long getStart() {
 		return startTime;
 	}
-	
-	public Long getEnd(){
+
+	public Long getEnd() {
 		return endTime;
 	}
 
